@@ -1,0 +1,75 @@
+# Compositional NNEF: custom fragments, generics and operator expressions.
+# Fragment bodies below are taken from the NNEF 1.0.5 specification.
+
+version 1.0;
+extension KHR_enable_fragment_definitions;
+extension KHR_enable_operator_expressions;
+
+# region Fragments
+
+# Recursive sum of an array of tensors
+fragment add_n( x: tensor<scalar>[] ) -> ( y: tensor<scalar> )
+{
+    y = x[0] + add_n(x[1:]) if length_of(x) > 0 else 0.0;
+}
+
+fragment separable_conv(
+    input: tensor<scalar>,
+    plane_filter: tensor<scalar>,
+    point_filter: tensor<scalar>,
+    bias: tensor<scalar> = 0.0,
+    border: string = 'constant',
+    padding: (integer,integer)[] = [],
+    stride: integer[] = [],
+    dilation: integer[] = [],
+    groups: integer = 1 )
+-> ( output: tensor<scalar> )
+{
+    filtered = conv(input, plane_filter, border = border, padding = padding,
+                    stride = stride, dilation = dilation, groups = 0);
+    output = conv(filtered, point_filter, bias, groups = groups);
+}
+
+fragment batch_norm(
+    input: tensor<scalar>,
+    mean: tensor<scalar>,
+    variance: tensor<scalar>,
+    offset: tensor<scalar>,
+    scale: tensor<scalar>,
+    epsilon: scalar = 1e-5 )
+-> ( output: tensor<scalar> )
+{
+    output = offset + scale * (input - mean) / sqrt(variance + epsilon);
+}
+
+# Generic fragment with a default data-type
+fragment fill<? = scalar>( shape: integer[], value: ? ) -> ( output: tensor<?> )
+{
+    output = constant<?>(shape = shape, value = [value]);
+}
+
+# Custom operation: declared, but no body
+fragment my_vendor_op( input: tensor<scalar>, alpha: scalar = 0.5, flag: logical = true )
+-> ( output: tensor<scalar> );
+
+fragment reverse_axes( input: tensor<?>, rank: integer ) -> ( output: tensor<?> )
+{
+    axes = [for i in range_of([0] * rank) yield rank - i - 1];
+    output = transpose(input, axes = axes);
+}
+
+# endregion
+
+graph Network( input ) -> ( output, mask )
+{
+    input = external<scalar>(shape = [1, 3, 32, 32]);
+    filter = variable<scalar>(shape = [16, 1, 3, 3], label = "net/conv1/filter");
+    points = variable(shape = [32, 16, 1, 1], label = 'net/conv1/points');
+    conv1 = separable_conv(input, filter, points, padding = [(1, 1), (1, 1)]);
+    bn1 = batch_norm(conv1, 0.0, 1.0, 0.0, 1.0);
+    act1 = leaky_relu(bn1, alpha = -0.1);
+    [left, right] = split(act1, axis = 1, ratios = [1, 1]);
+    summed = add_n([left, right, fill<scalar>(shape = [1, 16, 32, 32], value = 2.5e-1)]);
+    output = my_vendor_op(summed, alpha = 0.25, flag = !false && 1 != 2);
+    mask = gt(output, 0.0);
+}

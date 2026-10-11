@@ -1,0 +1,7 @@
+# Quantization info for the AlexNet sample (NNEF 1.0.5, section 5.3)
+"input": zero_point_linear_quantize(zero_point = 128, scale = 0.0078125, bits = 8, signed = false, symmetric = false);
+"conv1": linear_quantize(min = -2.0, max = 2.5, bits = 8);
+"relu1": min_max_linear_quantize(min = 0.0, max = 6.0, bits = 8, signed = false, symmetric = false);
+'pool1': logarithmic_quantize(max = 6.0, bits = 4);
+# Per-channel ranges given as array literals
+"conv2": linear_quantize(min = [[-1.0], [-1.5], [-0.75]], max = [[1.0], [1.5], [0.75]], bits = 8);

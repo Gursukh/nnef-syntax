@@ -1,0 +1,35 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "NNEF Quantization",
+  "scopeName": "source.nnef.quant",
+  "fileTypes": ["quant"],
+  "patterns": [
+    { "include": "source.nnef#comment" },
+    { "include": "#tensor-key" },
+    { "include": "source.nnef#expression" }
+  ],
+  "repository": {
+    "tensor-key": {
+      "patterns": [
+        {
+          "match": "(\")((?:[^\"\\\\]|\\\\.)*)(\")\\s*(:)",
+          "captures": {
+            "1": { "name": "support.type.property-name.nnef punctuation.support.type.property-name.begin.nnef" },
+            "2": { "name": "support.type.property-name.nnef" },
+            "3": { "name": "support.type.property-name.nnef punctuation.support.type.property-name.end.nnef" },
+            "4": { "name": "punctuation.separator.key-value.nnef" }
+          }
+        },
+        {
+          "match": "(')((?:[^'\\\\]|\\\\.)*)(')\\s*(:)",
+          "captures": {
+            "1": { "name": "support.type.property-name.nnef punctuation.support.type.property-name.begin.nnef" },
+            "2": { "name": "support.type.property-name.nnef" },
+            "3": { "name": "support.type.property-name.nnef punctuation.support.type.property-name.end.nnef" },
+            "4": { "name": "punctuation.separator.key-value.nnef" }
+          }
+        }
+      ]
+    }
+  }
+}

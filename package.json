@@ -1,0 +1,105 @@
+{
+  "name": "nnef-syntax",
+  "displayName": "NNEF Syntax Highlighting",
+  "description": "Syntax highlighting, snippets and editor support for Khronos NNEF (Neural Network Exchange Format) graph and quantization files.",
+  "version": "0.1.0",
+  "publisher": "Gursukh",
+  "license": "MIT",
+  "icon": "images/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Gursukh/nnef-syntax"
+  },
+  "bugs": {
+    "url": "https://github.com/Gursukh/nnef-syntax/issues"
+  },
+  "homepage": "https://github.com/Gursukh/nnef-syntax#readme",
+  "engines": {
+    "vscode": "^1.75.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Snippets"
+  ],
+  "keywords": [
+    "nnef",
+    "khronos",
+    "neural network",
+    "neural network exchange format",
+    "machine learning",
+    "deep learning",
+    "onnx",
+    "syntax",
+    "highlighting"
+  ],
+  "galleryBanner": {
+    "color": "#1E1E2E",
+    "theme": "dark"
+  },
+  "contributes": {
+    "languages": [
+      {
+        "id": "nnef",
+        "aliases": [
+          "NNEF",
+          "nnef"
+        ],
+        "extensions": [
+          ".nnef"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./images/file-icon.png",
+          "dark": "./images/file-icon.png"
+        }
+      },
+      {
+        "id": "nnef-quant",
+        "aliases": [
+          "NNEF Quantization",
+          "nnef-quant"
+        ],
+        "extensions": [
+          ".quant"
+        ],
+        "filenames": [
+          "graph.quant"
+        ],
+        "configuration": "./language-configuration.json",
+        "icon": {
+          "light": "./images/file-icon.png",
+          "dark": "./images/file-icon.png"
+        }
+      }
+    ],
+    "grammars": [
+      {
+        "language": "nnef",
+        "scopeName": "source.nnef",
+        "path": "./syntaxes/nnef.tmLanguage.json"
+      },
+      {
+        "language": "nnef-quant",
+        "scopeName": "source.nnef.quant",
+        "path": "./syntaxes/nnef-quant.tmLanguage.json"
+      }
+    ],
+    "snippets": [
+      {
+        "language": "nnef",
+        "path": "./snippets/nnef.json"
+      }
+    ]
+  },
+  "scripts": {
+    "test": "vscode-tmgrammar-test \"test/**/*.test.nnef\" \"test/**/*.test.quant\"",
+    "package": "vsce package",
+    "publish:vsce": "vsce publish",
+    "publish:ovsx": "ovsx publish"
+  },
+  "devDependencies": {
+    "@vscode/vsce": "^4.0.0",
+    "ovsx": "^1.2.0",
+    "vscode-tmgrammar-test": "^0.1.3"
+  }
+}

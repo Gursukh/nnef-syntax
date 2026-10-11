@@ -1,0 +1,76 @@
+{
+  "Document header": {
+    "prefix": "version",
+    "body": [
+      "version ${1:1.0};",
+      "$0"
+    ],
+    "description": "NNEF version declaration"
+  },
+  "Extension declaration": {
+    "prefix": "extension",
+    "body": [
+      "extension ${1|KHR_enable_fragment_definitions,KHR_enable_operator_expressions|};"
+    ],
+    "description": "NNEF extension declaration"
+  },
+  "Graph definition": {
+    "prefix": "graph",
+    "body": [
+      "graph ${1:Network}( ${2:input} ) -> ( ${3:output} )",
+      "{",
+      "\t${2:input} = external<scalar>(shape = [${4:1, 3, 224, 224}]);",
+      "\t$0",
+      "}"
+    ],
+    "description": "NNEF graph definition"
+  },
+  "Fragment definition": {
+    "prefix": "fragment",
+    "body": [
+      "fragment ${1:name}( ${2:input}: tensor<${3:scalar}> ) -> ( ${4:output}: tensor<${3:scalar}> )",
+      "{",
+      "\t${4:output} = $0;",
+      "}"
+    ],
+    "description": "NNEF fragment (compound operation) definition"
+  },
+  "Generic fragment definition": {
+    "prefix": "fragment<?>",
+    "body": [
+      "fragment ${1:name}<?>( ${2:input}: tensor<?> ) -> ( ${3:output}: tensor<?> )",
+      "{",
+      "\t${3:output} = $0;",
+      "}"
+    ],
+    "description": "NNEF generic fragment definition"
+  },
+  "Custom operation declaration": {
+    "prefix": "fragment;",
+    "body": [
+      "fragment ${1:name}( ${2:input}: tensor<${3:scalar}> ) -> ( ${4:output}: tensor<${3:scalar}> );"
+    ],
+    "description": "NNEF custom (bodiless) operation declaration"
+  },
+  "Variable": {
+    "prefix": "variable",
+    "body": [
+      "${1:name} = variable<scalar>(shape = [${2}], label = '${3:path/to/$1}');"
+    ],
+    "description": "NNEF variable (stored tensor)"
+  },
+  "Convolution": {
+    "prefix": "conv",
+    "body": [
+      "${1:output} = conv(${2:input}, ${3:filter}, ${4:bias}, padding = [${5:(0,0), (0,0)}], border = '${6|constant,ignore,reflect,replicate|}', stride = [${7:1, 1}], dilation = [${8:1, 1}]);"
+    ],
+    "description": "NNEF convolution"
+  },
+  "Array comprehension": {
+    "prefix": "for",
+    "body": [
+      "[for ${1:i} in range_of(${2:items}) yield ${3:$2[$1]}]"
+    ],
+    "description": "NNEF array comprehension"
+  }
+}

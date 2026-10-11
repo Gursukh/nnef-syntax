@@ -1,0 +1,143 @@
+# SYNTAX TEST "source.nnef" "NNEF grammar"
+
+version 1.0;
+# <------- keyword.other.version.nnef
+#       ^^^ constant.numeric.float.nnef
+#          ^ punctuation.terminator.statement.nnef
+
+extension KHR_enable_fragment_definitions VENDOR_custom_ops;
+# <--------- keyword.other.extension.nnef
+#         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ entity.name.namespace.extension.nnef
+#                                         ^^^^^^^^^^^^^^^^^ entity.name.namespace.extension.nnef
+
+x = 1; # trailing comment
+#      ^ comment.line.number-sign.nnef punctuation.definition.comment.nnef
+#        ^^^^^^^^ comment.line.number-sign.nnef
+
+fragment fizz<? = scalar>( shape: integer[], value: ? ) -> ( output: tensor<?> );
+# <-------- storage.type.fragment.nnef
+#        ^^^^ entity.name.function.fragment.nnef
+#            ^ punctuation.definition.typeparameters.begin.nnef
+#             ^ storage.type.generic.nnef
+#               ^ keyword.operator.assignment.nnef
+#                 ^^^^^^ storage.type.primitive.nnef
+#                       ^ punctuation.definition.typeparameters.end.nnef
+#                          ^^^^^ variable.parameter.nnef
+#                                 ^^^^^^^ storage.type.primitive.nnef
+#                                        ^^ storage.modifier.array.nnef
+#                                            ^^^^^ variable.parameter.nnef
+#                                                   ^ storage.type.generic.nnef
+#                                                       ^^ keyword.operator.arrow.nnef
+#                                                            ^^^^^^ variable.parameter.nnef
+#                                                                    ^^^^^^ storage.type.tensor.nnef
+#                                                                           ^ storage.type.generic.nnef
+#                                                                               ^ punctuation.terminator.statement.nnef
+
+fragment f( a: (integer, scalar)[] = [], b: string = 'x\'y', c: logical = false ) -> ( y: tensor<scalar> )
+#              ^ punctuation.definition.parameters.begin.nnef
+#               ^^^^^^^ storage.type.primitive.nnef
+#                        ^^^^^^ storage.type.primitive.nnef
+#                               ^^ storage.modifier.array.nnef
+#                                    ^ punctuation.section.brackets.begin.nnef
+#                                     ^ punctuation.section.brackets.end.nnef
+#                                           ^^^^^^ storage.type.primitive.nnef
+#                                                    ^^^^^^ string.quoted.single.nnef
+#                                                      ^^ constant.character.escape.nnef
+#                                                               ^^^^^^^ storage.type.primitive.nnef
+#                                                                         ^^^^^ constant.language.boolean.false.nnef
+#                                                                                                ^^^^^^ storage.type.primitive.nnef
+{
+# <- punctuation.section.block.begin.nnef
+    y = x[0] + add_n(x[1:]) if length_of(x) > 0 else -1.5e-3;
+#   ^ variable.other.nnef
+#     ^ keyword.operator.assignment.nnef
+#         ^ constant.numeric.integer.nnef
+#            ^ keyword.operator.arithmetic.nnef
+#              ^^^^^ support.function.nnef
+#                      ^ constant.numeric.integer.nnef
+#                       ^ punctuation.separator.slice.nnef
+#                           ^^ keyword.control.if.nnef
+#                              ^^^^^^^^^ support.function.builtin.nnef
+#                                           ^ keyword.operator.comparison.nnef
+#                                               ^^^^ keyword.control.else.nnef
+#                                                    ^^^^^^^ constant.numeric.float.nnef
+    z = [for i in range_of(y) if i != 0 yield shape_of(y)[i]];
+#        ^^^ keyword.control.for.nnef
+#              ^^ keyword.control.in.nnef
+#                 ^^^^^^^^ support.function.builtin.nnef
+#                             ^^ keyword.control.if.nnef
+#                                  ^^ keyword.operator.comparison.nnef
+#                                       ^^^^^ keyword.control.yield.nnef
+#                                             ^^^^^^^^ support.function.builtin.deprecated.nnef
+    w = integer(scalar('2.5')) * 2 ^ 3 - a-1;
+#       ^^^^^^^ support.function.builtin.nnef
+#               ^^^^^^ support.function.builtin.nnef
+#                      ^^^^^ string.quoted.single.nnef
+#                              ^ keyword.operator.arithmetic.nnef
+#                                ^ constant.numeric.integer.nnef
+#                                  ^ keyword.operator.arithmetic.nnef
+#                                      ^ keyword.operator.arithmetic.nnef
+#                                         ^ keyword.operator.arithmetic.nnef
+#                                          ^ constant.numeric.integer.nnef
+    v = !true && false || (1 <= 2) == (3 >= 4);
+#       ^ keyword.operator.logical.nnef
+#        ^^^^ constant.language.boolean.true.nnef
+#             ^^ keyword.operator.logical.nnef
+#                      ^^ keyword.operator.logical.nnef
+#                         ^ punctuation.section.parens.begin.nnef
+#                            ^^ keyword.operator.comparison.nnef
+#                                  ^^ keyword.operator.comparison.nnef
+#                                        ^^ keyword.operator.comparison.nnef
+#                                ^ punctuation.section.parens.end.nnef
+}
+# <- punctuation.section.block.end.nnef
+
+graph G( input, other ) -> ( output )
+# <----- storage.type.graph.nnef
+#     ^ entity.name.function.graph.nnef
+#        ^^^^^ variable.parameter.nnef
+#               ^^^^^ variable.parameter.nnef
+#                       ^^ keyword.operator.arrow.nnef
+#                            ^^^^^^ variable.parameter.nnef
+{
+    input = external<scalar>(shape = [1, 3, 224, 224]);
+#   ^^^^^ variable.other.nnef
+#           ^^^^^^^^ support.function.nnef
+#                   ^ punctuation.definition.typeparameters.begin.nnef
+#                    ^^^^^^ storage.type.primitive.nnef
+#                          ^ punctuation.definition.typeparameters.end.nnef
+#                           ^ punctuation.definition.arguments.begin.nnef
+#                            ^^^^^ variable.parameter.nnef
+#                                  ^ keyword.operator.assignment.nnef
+#                                    ^ punctuation.section.brackets.begin.nnef
+#                                           ^^^ constant.numeric.integer.nnef
+#                                                    ^ punctuation.definition.arguments.end.nnef
+    kernel = variable(shape = [64, 3, 11, 11], label = "net/conv1/kernel");
+#            ^^^^^^^^ support.function.nnef
+#                                              ^^^^^ variable.parameter.nnef
+#                                                      ^^^^^^^^^^^^^^^^^^ string.quoted.double.nnef
+    conv1 = conv(input, kernel, padding = [(0,0), (0,0)], border = 'constant');
+#           ^^^^ support.function.nnef
+#                ^^^^^ variable.other.nnef
+#                               ^^^^^^^ variable.parameter.nnef
+#               ^ punctuation.definition.arguments.begin.nnef
+#                                          ^ punctuation.section.parens.begin.nnef
+#                                           ^ constant.numeric.integer.nnef
+#                                                                  ^^^^^^^^^^ string.quoted.single.nnef
+    [a, b] = split(conv1, axis = 1, ratios = [1, 1]);
+#   ^ punctuation.section.brackets.begin.nnef
+#    ^ variable.other.nnef
+#     ^ punctuation.separator.comma.nnef
+#            ^^^^^ support.function.nnef
+#                         ^^^^ variable.parameter.nnef
+    output = my_custom_op<?>(a, alpha = -0.25, flag = true);
+#            ^^^^^^^^^^^^ entity.name.function.call.nnef
+#                         ^ storage.type.generic.nnef
+#                                       ^^^^^ constant.numeric.float.nnef
+#                                                     ^^^^ constant.language.boolean.true.nnef
+    t = tensor_op(if_x, input_2, version_1);
+#       ^^^^^^^^^ entity.name.function.call.nnef
+#                 ^^^^ variable.other.nnef
+#                       ^^^^^^^ variable.other.nnef
+#                                ^^^^^^^^^ variable.other.nnef
+}

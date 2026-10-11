@@ -1,0 +1,24 @@
+# SYNTAX TEST "source.nnef.quant" "NNEF quantization grammar"
+
+"conv1/filter": linear_quantize(min = -2.0, max = 2.5, bits = 8);
+# <- support.type.property-name.nnef punctuation.support.type.property-name.begin.nnef
+#^^^^^^^^^^^^ support.type.property-name.nnef
+#            ^ support.type.property-name.nnef punctuation.support.type.property-name.end.nnef
+#             ^ punctuation.separator.key-value.nnef
+#               ^^^^^^^^^^^^^^^ support.function.nnef
+#                               ^^^ variable.parameter.nnef
+#                                     ^^^^ constant.numeric.float.nnef
+#                                                             ^ constant.numeric.integer.nnef
+#                                                               ^ punctuation.terminator.statement.nnef
+
+'bias1': zero_point_linear_quantize(zero_point = [[0], [3]], scale = 0.5, bits = 8, signed = true, symmetric = false);
+# <- support.type.property-name.nnef punctuation.support.type.property-name.begin.nnef
+#^^^^^ support.type.property-name.nnef
+#        ^^^^^^^^^^^^^^^^^^^^^^^^^^ support.function.nnef
+#                                                ^ punctuation.section.brackets.begin.nnef
+#                                                       ^ constant.numeric.integer.nnef
+#                                                                                            ^^^^ constant.language.boolean.true.nnef
+
+"a\"b": logarithmic_quantize(max = 6.0, bits = 4); # comment
+#^^^^ support.type.property-name.nnef
+#                                                  ^ comment.line.number-sign.nnef punctuation.definition.comment.nnef

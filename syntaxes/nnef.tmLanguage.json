@@ -1,0 +1,435 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "NNEF",
+  "scopeName": "source.nnef",
+  "fileTypes": ["nnef"],
+  "patterns": [
+    { "include": "#comment" },
+    { "include": "#version" },
+    { "include": "#extension" },
+    { "include": "#fragment-declaration" },
+    { "include": "#graph-declaration" },
+    { "include": "#block" },
+    { "include": "#expression" }
+  ],
+  "repository": {
+    "comment": {
+      "match": "(#).*$",
+      "name": "comment.line.number-sign.nnef",
+      "captures": {
+        "1": { "name": "punctuation.definition.comment.nnef" }
+      }
+    },
+
+    "version": {
+      "begin": "\\b(version)\\b",
+      "beginCaptures": {
+        "1": { "name": "keyword.other.version.nnef" }
+      },
+      "end": "(;)",
+      "endCaptures": {
+        "1": { "name": "punctuation.terminator.statement.nnef" }
+      },
+      "name": "meta.version.nnef",
+      "patterns": [
+        { "include": "#comment" },
+        { "include": "#number" }
+      ]
+    },
+
+    "extension": {
+      "begin": "\\b(extension)\\b",
+      "beginCaptures": {
+        "1": { "name": "keyword.other.extension.nnef" }
+      },
+      "end": "(;)",
+      "endCaptures": {
+        "1": { "name": "punctuation.terminator.statement.nnef" }
+      },
+      "name": "meta.extension.nnef",
+      "patterns": [
+        { "include": "#comment" },
+        {
+          "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b",
+          "name": "entity.name.namespace.extension.nnef"
+        },
+        { "include": "#punctuation" }
+      ]
+    },
+
+    "fragment-declaration": {
+      "begin": "\\b(fragment)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+      "beginCaptures": {
+        "1": { "name": "storage.type.fragment.nnef" },
+        "2": { "name": "entity.name.function.fragment.nnef" }
+      },
+      "end": "(?=[{;])",
+      "name": "meta.fragment.declaration.nnef",
+      "patterns": [
+        { "include": "#comment" },
+        { "include": "#generic-declaration" },
+        { "include": "#declaration-parameters" },
+        { "include": "#arrow" }
+      ]
+    },
+
+    "generic-declaration": {
+      "match": "(<)\\s*(\\?)\\s*(?:(=)\\s*(integer|scalar|logical|string)\\s*)?(>)",
+      "name": "meta.generic.declaration.nnef",
+      "captures": {
+        "1": { "name": "punctuation.definition.typeparameters.begin.nnef" },
+        "2": { "name": "storage.type.generic.nnef" },
+        "3": { "name": "keyword.operator.assignment.nnef" },
+        "4": { "name": "storage.type.primitive.nnef" },
+        "5": { "name": "punctuation.definition.typeparameters.end.nnef" }
+      }
+    },
+
+    "declaration-parameters": {
+      "begin": "\\(",
+      "beginCaptures": {
+        "0": { "name": "punctuation.definition.parameters.begin.nnef" }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.parameters.end.nnef" }
+      },
+      "name": "meta.parameters.nnef",
+      "patterns": [
+        { "include": "#comment" },
+        {
+          "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*(:)",
+          "captures": {
+            "1": { "name": "variable.parameter.nnef" },
+            "2": { "name": "punctuation.separator.type.nnef" }
+          }
+        },
+        { "include": "#type" },
+        { "include": "#declaration-parameters" },
+        { "include": "#literal" },
+        { "include": "#array" },
+        { "include": "#operator" },
+        { "include": "#punctuation" }
+      ]
+    },
+
+    "graph-declaration": {
+      "begin": "\\b(graph)\\s+([A-Za-z_][A-Za-z0-9_]*)",
+      "beginCaptures": {
+        "1": { "name": "storage.type.graph.nnef" },
+        "2": { "name": "entity.name.function.graph.nnef" }
+      },
+      "end": "(?=\\{)",
+      "name": "meta.graph.declaration.nnef",
+      "patterns": [
+        { "include": "#comment" },
+        {
+          "begin": "\\(",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.parameters.begin.nnef" }
+          },
+          "end": "\\)",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.parameters.end.nnef" }
+          },
+          "name": "meta.parameters.nnef",
+          "patterns": [
+            { "include": "#comment" },
+            {
+              "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b",
+              "name": "variable.parameter.nnef"
+            },
+            { "include": "#punctuation" }
+          ]
+        },
+        { "include": "#arrow" }
+      ]
+    },
+
+    "block": {
+      "begin": "\\{",
+      "beginCaptures": {
+        "0": { "name": "punctuation.section.block.begin.nnef" }
+      },
+      "end": "\\}",
+      "endCaptures": {
+        "0": { "name": "punctuation.section.block.end.nnef" }
+      },
+      "name": "meta.block.nnef",
+      "patterns": [
+        { "include": "#expression" }
+      ]
+    },
+
+    "expression": {
+      "patterns": [
+        { "include": "#comment" },
+        { "include": "#literal" },
+        { "include": "#control-keyword" },
+        { "include": "#builtin-call" },
+        { "include": "#standard-operation-call" },
+        { "include": "#function-call" },
+        { "include": "#array" },
+        { "include": "#parens" },
+        { "include": "#arrow" },
+        { "include": "#operator" },
+        { "include": "#punctuation" },
+        { "include": "#identifier" }
+      ]
+    },
+
+    "control-keyword": {
+      "patterns": [
+        {
+          "match": "\\b(for|in|yield|if|else)\\b",
+          "name": "keyword.control.$1.nnef"
+        }
+      ]
+    },
+
+    "builtin-call": {
+      "begin": "\\b(?:(shape_of)|(length_of|range_of|integer|scalar|logical|string))\\s*(\\()",
+      "beginCaptures": {
+        "1": { "name": "support.function.builtin.deprecated.nnef" },
+        "2": { "name": "support.function.builtin.nnef" },
+        "3": { "name": "punctuation.definition.arguments.begin.nnef" }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.arguments.end.nnef" }
+      },
+      "name": "meta.function-call.builtin.nnef",
+      "patterns": [
+        { "include": "#arguments" }
+      ]
+    },
+
+    "standard-operation-call": {
+      "begin": "\\b(abs|acos|acosh|add|add_n|all_reduce|and|any_reduce|area_downsample|argmax_pool|argmax_reduce|argmin_reduce|asin|asinh|atan|atanh|avg_pool|avg_roi_align|avg_roi_pool|batch_normalization|_bilinear_upsample2x_asymmetric|_bilinear_upsample2x_symmetric|box|cast|ceil|clamp|concat|constant|conv|copy|copy_n|cos|cosh|debox|deconv|desample|div|elu|eq|exp|external|floor|gather|ge|gelu|gt|l1_normalization|l2_normalization|le|leaky_relu|linear|linear_quantize|_linear_upsample2x_asymmetric|_linear_upsample2x_symmetric|local_contrast_normalization|local_mean_normalization|local_response_normalization|local_variance_normalization|log|log2|logarithmic_quantize|lt|matmul|max|max_pool|max_pool_with_index|max_reduce|max_roi_align|max_roi_pool|mean_reduce|min|min_max_linear_quantize|min_reduce|moments|mul|multilinear_upsample|ne|nearest_downsample|nearest_upsample|neg|not|or|pad|pow|prelu|rcp|relu|reshape|rms_pool|roi_resample|round|rsqr|rsqrt|sample|select|selu|separable_conv|separable_deconv|sigmoid|sign|silu|sin|sinh|slice|softmax|softplus|split|sqr|sqrt|squeeze|stack|sub|sum_reduce|tan|tanh|tile|transpose|unsqueeze|unstack|update|variable|zero_point_linear_quantize)\\s*(?:(<)\\s*(?:(integer|scalar|logical|string)|(\\?))\\s*(>))?\\s*(\\()",
+      "beginCaptures": {
+        "1": { "name": "support.function.nnef" },
+        "2": { "name": "punctuation.definition.typeparameters.begin.nnef" },
+        "3": { "name": "storage.type.primitive.nnef" },
+        "4": { "name": "storage.type.generic.nnef" },
+        "5": { "name": "punctuation.definition.typeparameters.end.nnef" },
+        "6": { "name": "punctuation.definition.arguments.begin.nnef" }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.arguments.end.nnef" }
+      },
+      "name": "meta.function-call.nnef",
+      "patterns": [
+        { "include": "#arguments" }
+      ]
+    },
+
+    "function-call": {
+      "begin": "\\b(?!(?:version|extension|graph|fragment|tensor|for|in|yield|if|else|true|false)\\b)([A-Za-z_][A-Za-z0-9_]*)\\s*(?:(<)\\s*(?:(integer|scalar|logical|string)|(\\?))\\s*(>))?\\s*(\\()",
+      "beginCaptures": {
+        "1": { "name": "entity.name.function.call.nnef" },
+        "2": { "name": "punctuation.definition.typeparameters.begin.nnef" },
+        "3": { "name": "storage.type.primitive.nnef" },
+        "4": { "name": "storage.type.generic.nnef" },
+        "5": { "name": "punctuation.definition.typeparameters.end.nnef" },
+        "6": { "name": "punctuation.definition.arguments.begin.nnef" }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": { "name": "punctuation.definition.arguments.end.nnef" }
+      },
+      "name": "meta.function-call.nnef",
+      "patterns": [
+        { "include": "#arguments" }
+      ]
+    },
+
+    "arguments": {
+      "patterns": [
+        {
+          "match": "\\b([A-Za-z_][A-Za-z0-9_]*)\\s*(=)(?!=)",
+          "captures": {
+            "1": { "name": "variable.parameter.nnef" },
+            "2": { "name": "keyword.operator.assignment.nnef" }
+          }
+        },
+        { "include": "#expression" }
+      ]
+    },
+
+    "type": {
+      "patterns": [
+        {
+          "match": "\\b(tensor)\\s*(<)\\s*(?:(integer|scalar|logical|string)|(\\?))?\\s*(>)",
+          "captures": {
+            "1": { "name": "storage.type.tensor.nnef" },
+            "2": { "name": "punctuation.definition.typeparameters.begin.nnef" },
+            "3": { "name": "storage.type.primitive.nnef" },
+            "4": { "name": "storage.type.generic.nnef" },
+            "5": { "name": "punctuation.definition.typeparameters.end.nnef" }
+          }
+        },
+        {
+          "match": "\\btensor\\b",
+          "name": "storage.type.tensor.nnef"
+        },
+        {
+          "match": "\\b(integer|scalar|logical|string)\\b",
+          "name": "storage.type.primitive.nnef"
+        },
+        {
+          "match": "\\?",
+          "name": "storage.type.generic.nnef"
+        },
+        {
+          "match": "(?<=[A-Za-z0-9_>\\]\\)])\\[\\s*\\]",
+          "name": "storage.modifier.array.nnef"
+        }
+      ]
+    },
+
+    "literal": {
+      "patterns": [
+        { "include": "#string" },
+        { "include": "#number" },
+        {
+          "match": "\\b(true|false)\\b",
+          "name": "constant.language.boolean.$1.nnef"
+        }
+      ]
+    },
+
+    "number": {
+      "patterns": [
+        {
+          "match": "(?<![\\w)\\]])-?\\d+(?:(?:\\.\\d*)(?:[eE][+-]?\\d+)?|[eE][+-]?\\d+)(?![\\w.])",
+          "name": "constant.numeric.float.nnef"
+        },
+        {
+          "match": "(?<![\\w)\\]])-?\\d+(?![\\w.])",
+          "name": "constant.numeric.integer.nnef"
+        }
+      ]
+    },
+
+    "string": {
+      "patterns": [
+        {
+          "begin": "'",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.nnef" }
+          },
+          "end": "'",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.nnef" }
+          },
+          "name": "string.quoted.single.nnef",
+          "patterns": [
+            { "include": "#string-escape" }
+          ]
+        },
+        {
+          "begin": "\"",
+          "beginCaptures": {
+            "0": { "name": "punctuation.definition.string.begin.nnef" }
+          },
+          "end": "\"",
+          "endCaptures": {
+            "0": { "name": "punctuation.definition.string.end.nnef" }
+          },
+          "name": "string.quoted.double.nnef",
+          "patterns": [
+            { "include": "#string-escape" }
+          ]
+        }
+      ]
+    },
+
+    "string-escape": {
+      "match": "\\\\.",
+      "name": "constant.character.escape.nnef"
+    },
+
+    "array": {
+      "begin": "\\[",
+      "beginCaptures": {
+        "0": { "name": "punctuation.section.brackets.begin.nnef" }
+      },
+      "end": "\\]",
+      "endCaptures": {
+        "0": { "name": "punctuation.section.brackets.end.nnef" }
+      },
+      "name": "meta.brackets.nnef",
+      "patterns": [
+        {
+          "match": ":",
+          "name": "punctuation.separator.slice.nnef"
+        },
+        { "include": "#expression" }
+      ]
+    },
+
+    "parens": {
+      "begin": "\\(",
+      "beginCaptures": {
+        "0": { "name": "punctuation.section.parens.begin.nnef" }
+      },
+      "end": "\\)",
+      "endCaptures": {
+        "0": { "name": "punctuation.section.parens.end.nnef" }
+      },
+      "name": "meta.parens.nnef",
+      "patterns": [
+        { "include": "#expression" }
+      ]
+    },
+
+    "arrow": {
+      "match": "->",
+      "name": "keyword.operator.arrow.nnef"
+    },
+
+    "operator": {
+      "patterns": [
+        {
+          "match": "==|!=|<=|>=|<|>",
+          "name": "keyword.operator.comparison.nnef"
+        },
+        {
+          "match": "&&|\\|\\||!",
+          "name": "keyword.operator.logical.nnef"
+        },
+        {
+          "match": "=",
+          "name": "keyword.operator.assignment.nnef"
+        },
+        {
+          "match": "[-+*/^]",
+          "name": "keyword.operator.arithmetic.nnef"
+        }
+      ]
+    },
+
+    "punctuation": {
+      "patterns": [
+        {
+          "match": ";",
+          "name": "punctuation.terminator.statement.nnef"
+        },
+        {
+          "match": ",",
+          "name": "punctuation.separator.comma.nnef"
+        },
+        {
+          "match": ":",
+          "name": "punctuation.separator.colon.nnef"
+        }
+      ]
+    },
+
+    "identifier": {
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b",
+      "name": "variable.other.nnef"
+    }
+  }
+}
